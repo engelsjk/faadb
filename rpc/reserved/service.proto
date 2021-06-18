@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package engelsjk.faadb.reserved;
+option go_package = "github.com/engelsjk/faadb/rpc/reserved";
+
+// Master service.
+service Reserved {
+  // GetAircraft returns a Aircraft with the specified NNumber.
+  rpc GetAircraft(Query) returns (Aircraft);
+
+  // GetMultipleAircraftByRegistrant returns a list of Aircraft with the same Registrant name.
+  rpc GetMultipleAircraftByRegistrant(Query) returns (MultipleAircraft);
+}
+
+// Query for Aircraft (NNumber or Registrant).
+message Query {
+  string NNumber = 1;
+  string RegistrantName = 2; 
+  string RegistrantStreet1 = 3;
+  string RegistrantState = 4; 
+}
+
+// A Aircraft.
+message Aircraft {
+  string NNumber = 1;
+  string RegistrantName = 2;
+  string RegistrantStreet1 = 3;
+  string RegistrantStreet2 = 4;
+  string RegistrantCity = 5;
+  string RegistrantState = 6;
+  string RegistrantZipcode = 7;
+  string ReserveDate = 8;
+  string ReservationType = 9;
+  string ExpirationNoticeDate = 10;
+  string NNumberForChange = 11;
+  string PurgeDate = 12;
+}
+
+message MultipleAircraft {
+  repeated Aircraft Aircraft = 1;
+}

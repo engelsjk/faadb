@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package engelsjk.faadb.master;
+option go_package = "github.com/engelsjk/faadb/rpc/master";
+
+// Master service.
+service Master {
+  // GetAircraft returns an Aircraft with the specified NNumber.
+  rpc GetAircraft(Query) returns (Aircraft);
+
+  // GetPossibleAircraft returns a list of Aircraft that partially match the specified NNumber.
+  rpc GetPossibleAircraft(Query) returns (MultipleAircraft);
+
+  // GetMultipleAircraftByRegistrantName returns a list of Aircraft with the same Registrant name.
+  rpc GetMultipleAircraftByRegistrantName(Query) returns (MultipleAircraft);
+
+  // GetMultipleAircraftByRegistrantStreet1 returns a list of Aircraft with the same Registrant street1.
+  rpc GetMultipleAircraftByRegistrantStreet1(Query) returns (MultipleAircraft);
+}
+
+// Query for Aircraft (NNumber or Registrant).
+message Query {
+  string NNumber = 1;
+  string RegistrantName = 2; 
+  string RegistrantStreet1 = 3;
+  string RegistrantState = 4; 
+}
+
+// An Aircraft.
+message Aircraft {
+  string NNumber = 1;
+  string SerialNumber = 2;
+  string ManufacturerAircraftModelCode = 3;
+  string ManufacturerEngineModelCode = 4;
+  string ManufacturerYear = 5;
+  string RegistrantType = 6;
+  string RegistrantName = 7;
+  string RegistrantStreet1 = 8;
+  string RegistrantStreet2 = 9;
+  string RegistrantCity = 10;
+  string RegistrantState = 11;
+  string RegistrantZipCode = 12;
+  string RegistrantRegion = 13;
+  string RegistrantCounty = 14;
+  string RegistrantCountry = 15;
+  string LastActivityDate = 16;
+  string CertificationIssueDate = 17;
+  string CertificationAirworthinessClassification = 18;
+  string CertificationApprovedOperations = 19;
+  string AircraftType = 20;
+  string EngineType = 21;
+  string Status = 22;
+  string ModeSCode = 23;
+  string ModeSCodeHex = 24;
+  string AirworthinessDate = 25;
+  bool OwnershipFractional = 26;
+  string OwnershipOtherName1 = 27;
+  string OwnershipOtherName2 = 28;
+  string OwnershipOtherName3 = 29;
+  string OwnershipOtherName4 = 30;
+  string OwnershipOtherName5 = 31;
+  string ExpirationDate = 32;
+  string UniqueID = 33;
+  string KitManufacturerName = 34;
+  string KitModelName = 35;
+}
+
+message MultipleAircraft {
+  repeated Aircraft Aircraft = 1;
+}
