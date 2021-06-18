@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package engelsjk.faadb.dereg;
+option go_package = "github.com/engelsjk/faadb/service/dereg/rpc";
+
+// Dereg service.
+service Dereg {
+  // GetAircraft returns a Aircraft from a Query.
+  rpc GetAircraft(Query) returns (Aircraft);
+}
+
+// Query for Aircraft (NNumber or Registrant).
+message Query {
+  string NNumber = 1;
+  string SerialNumber = 2;
+  string RegistrantName = 3; 
+  string RegistrantStreet1 = 4;
+  string RegistrantState = 5; 
+}
+
+// A.
+message A {
+  string NNumber = 1;
+  string SerialNumber = 2;
+  string ManufacturerAircraftModelCode = 3;
+  string ManufacturerEngineModelCode = 4;
+  string ManufacturerYear = 5;
+  string Status = 6;
+  string RegistrantType = 7;
+  string RegistrantName = 8;
+  string RegistrantStreet1 = 9;
+  string RegistrantStreet2 = 10;
+  string RegistrantCity = 11;
+  string RegistrantState = 12;
+  string RegistrantZipCode = 13;
+  string RegistrantRegion = 14;
+  string RegistrantCounty = 15;
+  string RegistrantCountry = 16;
+  string RegistrantPhysicalAddress = 17;
+  string RegistrantPhysicalAddress2 = 18;
+  string RegistrantPhysicalCity = 19;
+  string RegistrantPhysicalState = 20;
+  string RegistrantPhysicalZipCode = 21;
+  string RegistrantPhysicalCounty = 22;
+  string RegistrantPhysicalCountry = 23;
+  string CertificationAirworthinessClassification = 24;
+  string CertificationApprovedOperations = 25;
+  string AirworthinessDate = 26;
+  string CancelDate = 27;
+  string ExportCountry = 28;
+  string LastActivityDate = 29;
+  string CertificationIssueDate = 30;
+  string OwnershipOtherName1 = 31;
+  string OwnershipOtherName2 = 32;
+  string OwnershipOtherName3 = 33;
+  string OwnershipOtherName4 = 34;
+  string OwnershipOtherName5 = 35;
+  string KitManufacturerName = 36;
+  string KitModelName = 37;
+  string ModeSCode = 38;
+  string ModeSCodeHex = 39;
+}
+
+message Aircraft {
+  repeated A A = 1;
+}

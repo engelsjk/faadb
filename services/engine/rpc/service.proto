@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package engelsjk.faadb.engine;
+option go_package = "github.com/engelsjk/faadb/services/engine/rpc";
+
+// Engine service.
+service Engine {
+  // GetEngineType returns an Engine Manufacturer/Model from a Query.
+  rpc GetEngineType(Query) returns (EngineType);
+}
+
+// Query of an Engine Manufacturer/Model
+message Query {
+  string ManufacturerModel = 1; // must be > 0
+}
+
+// EngineType.
+message EngineType {
+  string ManufacturerModelCode = 1;
+  string ManufacturerName = 2;
+  string ModelName = 3;
+  string EngineType = 4;          
+  int32 Horsepower = 5;
+  int32 PoundsOfThrust = 6;
+}
