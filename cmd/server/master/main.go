@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/engelsjk/faadb/services/master"
-	"github.com/engelsjk/faadb/services/master/rpc"
+	"github.com/engelsjk/faadb/rpc/master"
+	"github.com/engelsjk/faadb/servers/masterserver"
 	server "github.com/engelsjk/faadb/twirp-web-server"
 )
 
@@ -16,12 +16,12 @@ func main() {
 	var flagDBPath = flag.String("db", "master.db", "database path")
 	flag.Parse()
 
-	m, err := master.NewMasterService(*flagDataPath, *flagDBPath)
+	m, err := masterserver.NewMasterService(*flagDataPath, *flagDBPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	twirpHandler := rpc.NewMasterServer(master.NewServer(m))
+	twirpHandler := master.NewMasterServer(masterserver.NewServer(m))
 
 	server.Start(*flagPort, m.Name, twirpHandler)
 }

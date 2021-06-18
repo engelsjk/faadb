@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/engelsjk/faadb/services/dereg/rpc"
+	"github.com/engelsjk/faadb/rpc/dereg"
 )
 
 func main() {
 
 	addr := "http://localhost:8085" // dereg server
 
-	client := rpc.NewDeregProtobufClient(addr, &http.Client{})
+	client := dereg.NewDeregProtobufClient(addr, &http.Client{})
 
 	GetAircraft(client, "10021", "")
 	fmt.Println("***")
@@ -22,8 +22,8 @@ func main() {
 	GetAircraft(client, "", "BLUE HEN HELO LEASING CO")
 }
 
-func GetAircraft(client rpc.Dereg, nnumber, registrantName string) {
-	query := &rpc.Query{NNumber: nnumber, RegistrantName: registrantName}
+func GetAircraft(client dereg.Dereg, nnumber, registrantName string) {
+	query := &dereg.Query{NNumber: nnumber, RegistrantName: registrantName}
 	aircraft, err := client.GetAircraft(context.Background(), query)
 	if err != nil {
 		fmt.Printf("dereg: %v\n", err)

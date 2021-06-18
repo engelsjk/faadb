@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/engelsjk/faadb/services/reserved"
-	"github.com/engelsjk/faadb/services/reserved/rpc"
+	"github.com/engelsjk/faadb/rpc/reserved"
+	"github.com/engelsjk/faadb/servers/reservedserver"
 	server "github.com/engelsjk/faadb/twirp-web-server"
 )
 
@@ -16,12 +16,12 @@ func main() {
 	var flagDBPath = flag.String("db", "reserved.db", "database path")
 	flag.Parse()
 
-	r, err := reserved.NewReserved(*flagDataPath, *flagDBPath)
+	r, err := reservedserver.NewReserved(*flagDataPath, *flagDBPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	twirpHandler := rpc.NewReservedServer(reserved.NewServer(r))
+	twirpHandler := reserved.NewReservedServer(reservedserver.NewServer(r))
 
 	server.Start(*flagPort, r.Name, twirpHandler)
 }

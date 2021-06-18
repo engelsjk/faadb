@@ -3,19 +3,19 @@ package main
 import (
 	"flag"
 
-	"github.com/engelsjk/faadb/lookup-server"
-	aircraftrpc "github.com/engelsjk/faadb/services/aircraft/rpc"
-	enginerpc "github.com/engelsjk/faadb/services/engine/rpc"
-	masterrpc "github.com/engelsjk/faadb/services/master/rpc"
-	reservedrpc "github.com/engelsjk/faadb/services/reserved/rpc"
+	lookup "github.com/engelsjk/faadb/lookupserver"
+	"github.com/engelsjk/faadb/rpc/aircraft"
+	"github.com/engelsjk/faadb/rpc/engine"
+	"github.com/engelsjk/faadb/rpc/master"
+	"github.com/engelsjk/faadb/rpc/reserved"
 )
 
 type Lookup struct {
 	Name     string
-	master   masterrpc.Master
-	aircraft aircraftrpc.Aircraft
-	engine   enginerpc.Engine
-	reserved reservedrpc.Reserved
+	master   master.Master
+	aircraft aircraft.Aircraft
+	engine   engine.Engine
+	reserved reserved.Reserved
 }
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/engelsjk/faadb/services/aircraft"
-	"github.com/engelsjk/faadb/services/aircraft/rpc"
+	"github.com/engelsjk/faadb/rpc/aircraft"
+	"github.com/engelsjk/faadb/servers/aircraftserver"
 	server "github.com/engelsjk/faadb/twirp-web-server"
 )
 
@@ -16,12 +16,12 @@ func main() {
 	var flagDBPath = flag.String("db", "aircraft.db", "database path")
 	flag.Parse()
 
-	a, err := aircraft.NewAircraftService(*flagDataPath, *flagDBPath)
+	a, err := aircraftserver.NewAircraftService(*flagDataPath, *flagDBPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	twirpHandler := rpc.NewAircraftServer(aircraft.NewServer(a))
+	twirpHandler := aircraft.NewAircraftServer(aircraftserver.NewServer(a))
 
 	server.Start(*flagPort, a.Name, twirpHandler)
 }

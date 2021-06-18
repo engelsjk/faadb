@@ -6,21 +6,21 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/engelsjk/faadb/services/reserved/rpc"
+	"github.com/engelsjk/faadb/rpc/reserved"
 )
 
 func main() {
 
 	addr := "http://localhost:8084" // reserved server
 
-	client := rpc.NewReservedProtobufClient(addr, &http.Client{})
+	client := reserved.NewReservedProtobufClient(addr, &http.Client{})
 
 	GetAircraft(client, "138SS", "")
 	// GetAircraft(client, "", "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION")
 }
 
-func GetAircraft(client rpc.Reserved, nnumber, registrant string) {
-	query := &rpc.Query{NNumber: nnumber, RegistrantName: registrant}
+func GetAircraft(client reserved.Reserved, nnumber, registrant string) {
+	query := &reserved.Query{NNumber: nnumber, RegistrantName: registrant}
 	aircraft, err := client.GetAircraft(context.Background(), query)
 	if err != nil {
 		fmt.Printf("reserved: %v\n", err)
