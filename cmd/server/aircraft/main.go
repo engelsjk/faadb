@@ -6,7 +6,7 @@ import (
 
 	"github.com/engelsjk/faadb/rpc/aircraft"
 	"github.com/engelsjk/faadb/servers/aircraftserver"
-	server "github.com/engelsjk/faadb/twirp-web-server"
+	"github.com/engelsjk/faadb/twirpserver"
 )
 
 func main() {
@@ -23,5 +23,5 @@ func main() {
 
 	twirpHandler := aircraft.NewAircraftServer(aircraftserver.NewServer(a))
 
-	server.Start(*flagPort, a.Name, twirpHandler)
+	twirpserver.Start(*flagPort, a.Name, twirpHandler)
 }

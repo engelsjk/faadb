@@ -6,7 +6,7 @@ import (
 
 	"github.com/engelsjk/faadb/rpc/dereg"
 	"github.com/engelsjk/faadb/servers/deregserver"
-	server "github.com/engelsjk/faadb/twirp-web-server"
+	"github.com/engelsjk/faadb/twirpserver"
 )
 
 func main() {
@@ -23,5 +23,5 @@ func main() {
 
 	twirpHandler := dereg.NewDeregServer(deregserver.NewServer(a))
 
-	server.Start(*flagPort, a.Name, twirpHandler)
+	twirpserver.Start(*flagPort, a.Name, twirpHandler)
 }

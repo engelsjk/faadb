@@ -6,7 +6,7 @@ import (
 
 	"github.com/engelsjk/faadb/rpc/reserved"
 	"github.com/engelsjk/faadb/servers/reservedserver"
-	server "github.com/engelsjk/faadb/twirp-web-server"
+	"github.com/engelsjk/faadb/twirpserver"
 )
 
 func main() {
@@ -23,5 +23,5 @@ func main() {
 
 	twirpHandler := reserved.NewReservedServer(reservedserver.NewServer(r))
 
-	server.Start(*flagPort, r.Name, twirpHandler)
+	twirpserver.Start(*flagPort, r.Name, twirpHandler)
 }

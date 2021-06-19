@@ -6,7 +6,7 @@ import (
 
 	"github.com/engelsjk/faadb/rpc/master"
 	"github.com/engelsjk/faadb/servers/masterserver"
-	server "github.com/engelsjk/faadb/twirp-web-server"
+	"github.com/engelsjk/faadb/twirpserver"
 )
 
 func main() {
@@ -23,5 +23,5 @@ func main() {
 
 	twirpHandler := master.NewMasterServer(masterserver.NewServer(m))
 
-	server.Start(*flagPort, m.Name, twirpHandler)
+	twirpserver.Start(*flagPort, m.Name, twirpHandler)
 }

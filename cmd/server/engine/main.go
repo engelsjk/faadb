@@ -6,7 +6,7 @@ import (
 
 	"github.com/engelsjk/faadb/rpc/engine"
 	"github.com/engelsjk/faadb/servers/engineserver"
-	server "github.com/engelsjk/faadb/twirp-web-server"
+	"github.com/engelsjk/faadb/twirpserver"
 )
 
 func main() {
@@ -23,5 +23,5 @@ func main() {
 
 	twirpHandler := engine.NewEngineServer(engineserver.NewServer(e))
 
-	server.Start(*flagPort, e.Name, twirpHandler)
+	twirpserver.Start(*flagPort, e.Name, twirpHandler)
 }
