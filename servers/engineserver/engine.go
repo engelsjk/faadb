@@ -14,7 +14,7 @@ type EngineService struct {
 	codes Codes
 }
 
-func NewEngineService(dataPath, dbPath string) (*EngineService, error) {
+func NewEngineService(dataPath, dbPath string, reload bool) (*EngineService, error) {
 	name := "engine"
 	numFields := 7
 
@@ -28,6 +28,7 @@ func NewEngineService(dataPath, dbPath string) (*EngineService, error) {
 		NumFields: numFields,
 		DataPath:  dataPath,
 		DBPath:    dbPath,
+		Reload:    reload,
 	}, e.DecodeLine)
 	if err != nil {
 		return nil, err

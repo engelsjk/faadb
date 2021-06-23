@@ -14,7 +14,7 @@ type AircraftService struct {
 	codes Codes
 }
 
-func NewAircraftService(dataPath, dbPath string) (*AircraftService, error) {
+func NewAircraftService(dataPath, dbPath string, reload bool) (*AircraftService, error) {
 	name := "aircraft"
 	numFields := 14
 
@@ -28,6 +28,7 @@ func NewAircraftService(dataPath, dbPath string) (*AircraftService, error) {
 		NumFields: numFields,
 		DataPath:  dataPath,
 		DBPath:    dbPath,
+		Reload:    reload,
 	}, a.DecodeLine)
 	if err != nil {
 		return nil, err

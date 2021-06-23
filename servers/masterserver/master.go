@@ -14,7 +14,7 @@ type MasterService struct {
 	codes Codes
 }
 
-func NewMasterService(dataPath, dbPath string) (*MasterService, error) {
+func NewMasterService(dataPath, dbPath string, reload bool) (*MasterService, error) {
 	name := "master"
 	numFields := 35
 
@@ -28,6 +28,7 @@ func NewMasterService(dataPath, dbPath string) (*MasterService, error) {
 		NumFields: numFields,
 		DataPath:  dataPath,
 		DBPath:    dbPath,
+		Reload:    reload,
 	}, m.DecodeLine)
 	if err != nil {
 		return nil, err

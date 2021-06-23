@@ -15,7 +15,7 @@ type DeregService struct {
 	codes Codes
 }
 
-func NewDeregService(dataPath, dbPath string) (*DeregService, error) {
+func NewDeregService(dataPath, dbPath string, reload bool) (*DeregService, error) {
 	name := "dereg"
 	numFields := 39
 
@@ -29,6 +29,7 @@ func NewDeregService(dataPath, dbPath string) (*DeregService, error) {
 		NumFields: numFields,
 		DataPath:  dataPath,
 		DBPath:    dbPath,
+		Reload:    reload,
 	}, d.DecodeLine)
 	if err != nil {
 		return nil, err

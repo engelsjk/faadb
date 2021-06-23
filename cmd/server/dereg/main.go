@@ -14,9 +14,10 @@ func main() {
 	var flagPort = flag.String("p", "8085", "port")
 	var flagDataPath = flag.String("dp", "DEREG.txt", "data path")
 	var flagDBPath = flag.String("db", "dereg.db", "database path")
+	var flagReloadDB = flag.Bool("reload", false, "reload database")
 	flag.Parse()
 
-	a, err := deregserver.NewDeregService(*flagDataPath, *flagDBPath)
+	a, err := deregserver.NewDeregService(*flagDataPath, *flagDBPath, *flagReloadDB)
 	if err != nil {
 		log.Fatal(err)
 	}

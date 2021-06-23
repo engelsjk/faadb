@@ -14,6 +14,7 @@ type Settings struct {
 	DataPath  string
 	DBPath    string
 	NumFields int
+	Reload    bool
 }
 
 type Service struct {
@@ -38,7 +39,7 @@ func NewService(settings Settings, decoder func([]string) (string, string, error
 		return nil, err
 	}
 
-	if dbExists {
+	if dbExists && !settings.Reload {
 		log.Printf("%s : db already exists, skip loading\n", s.Name)
 		return s, nil
 	}

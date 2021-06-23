@@ -14,7 +14,7 @@ type ReservedService struct {
 	codes Codes
 }
 
-func NewReserved(dataPath, dbPath string) (*ReservedService, error) {
+func NewReserved(dataPath, dbPath string, reload bool) (*ReservedService, error) {
 	name := "reserved"
 	numFields := 13
 
@@ -28,6 +28,7 @@ func NewReserved(dataPath, dbPath string) (*ReservedService, error) {
 		NumFields: numFields,
 		DataPath:  dataPath,
 		DBPath:    dbPath,
+		Reload:    reload,
 	}, r.DecodeLine)
 	if err != nil {
 		return nil, err
