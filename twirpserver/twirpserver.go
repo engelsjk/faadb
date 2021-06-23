@@ -1,4 +1,4 @@
-package server
+package twirpserver
 
 import (
 	"context"
