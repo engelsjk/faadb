@@ -37,20 +37,18 @@ func NewMasterService(dataPath, dbPath string, reload bool) (*MasterService, err
 	if err := m.svc.CreateIndexJSON("nnumber", "*", "nnumber"); err != nil {
 		return nil, err
 	}
-
 	if err := m.svc.CreateIndexJSON("serial_number", "*", "serial_number"); err != nil {
 		return nil, err
 	}
-
 	if err := m.svc.CreateIndexJSON("registrant_name", "*", "registrant.name"); err != nil {
 		return nil, err
 	}
-
 	if err := m.svc.CreateIndexJSON("registrant_street_1", "*", "registrant.street_1"); err != nil {
 		return nil, err
 	}
-
-	// index: registrant.state?
+	if err := m.svc.CreateIndexJSON("registrant_state", "*", "registrant.state"); err != nil {
+		return nil, err
+	}
 
 	return m, nil
 }

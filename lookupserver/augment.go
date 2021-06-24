@@ -10,9 +10,6 @@ import (
 	"github.com/engelsjk/faadb/rpc/reserved"
 )
 
-type Aircraft interface {
-}
-
 type AugmentedA struct {
 	Aircraft     interface{}            `json:"Aircraft"`
 	AircraftType *aircraft.AircraftType `json:"AircraftType"`
@@ -62,18 +59,27 @@ func (g Augmenter) AugmentAircraft(ctx context.Context, a interface{}) Augmented
 	case nil:
 		return nil
 	case *master.Aircraft:
+		if v == nil {
+			return nil
+		}
 		augmentedAircraft := make(AugmentedAircraft, len(v.A))
 		for i, ac := range v.A {
 			augmentedAircraft[i] = g.AugmentA(ctx, ac)
 		}
 		return augmentedAircraft
 	case *reserved.Aircraft:
+		if v == nil {
+			return nil
+		}
 		augmentedAircraft := make(AugmentedAircraft, len(v.A))
 		for i, ac := range v.A {
 			augmentedAircraft[i] = g.AugmentA(ctx, ac)
 		}
 		return augmentedAircraft
 	case *dereg.Aircraft:
+		if v == nil {
+			return nil
+		}
 		augmentedAircraft := make(AugmentedAircraft, len(v.A))
 		for i, ac := range v.A {
 			augmentedAircraft[i] = g.AugmentA(ctx, ac)

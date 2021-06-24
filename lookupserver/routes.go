@@ -10,33 +10,58 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 
 	e.GET("/aircraft", func(c echo.Context) error {
 
-		nnumber := c.QueryParam("n")
+		nNumber := c.QueryParam("n")
 		registrantName := c.QueryParam("registrant_name")
 		sameRegistrantName := c.QueryParam("same_registrant_name")
 
 		// todo: clean up query param logic!
 
-		if nnumber != "" {
+		if nNumber != "" {
 			if sameRegistrantName == "true" {
-				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(l.GetOtherAircraftByRegistrantName(nnumber)))
+				r, _ := l.GetOtherAircraftByRegistrantName(nNumber)
+				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
 			}
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(l.GetAircraftByNNumber(nnumber)))
+			r, _ := l.GetAircraftByNNumber(nNumber)
+			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
 		}
 		if registrantName != "" {
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(l.GetAircraftByRegistrantName(registrantName)))
+			r, _ := l.GetAircraftByRegistrantName(registrantName)
+			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
+		}
+		return c.JSON(http.StatusBadRequest, "request not valid")
+	})
+
+	e.GET("/aircraft2", func(c echo.Context) error {
+		nNumber := c.QueryParam("n")
+		serialNumber := c.QueryParam("sn")
+		sameSerialNumber := c.QueryParam("same_serial_number")
+
+		if nNumber != "" {
+			if sameSerialNumber == "true" {
+				r, _ := l.GetOtherAircraftBySerialNumber2(nNumber)
+				return c.JSONBlob(http.StatusOK, ToBytes(r))
+			}
+			r, _ := l.GetAircraftByNNumber2(nNumber)
+			return c.JSONBlob(http.StatusOK, ToBytes(r))
+		}
+		if serialNumber != "" {
+			r, _ := l.GetAircraftBySerialNumber2(serialNumber)
+			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
 		return c.JSON(http.StatusBadRequest, "request not valid")
 	})
 
 	e.GET("/dereg", func(c echo.Context) error {
-		nnumber := c.QueryParam("n")
+		nNumber := c.QueryParam("n")
 		sameSerialNumber := c.QueryParam("same_serial_number")
 
-		if nnumber != "" {
+		if nNumber != "" {
 			if sameSerialNumber == "true" {
-				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(l.GetOtherDeregBySerialNumber(nnumber)))
+				r, _ := l.GetOtherDeregBySerialNumber(nNumber)
+				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
 			}
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(l.GetDeregByNNumber(nnumber)))
+			r, _ := l.GetDeregByNNumber(nNumber)
+			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
 		}
 		return c.JSON(http.StatusBadRequest, "request not valid")
 	})
