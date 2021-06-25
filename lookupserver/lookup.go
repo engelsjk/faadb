@@ -3,6 +3,7 @@ package lookupserver
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -68,7 +69,7 @@ type AircraftResponse struct {
 	Deregistered AugmentedAircraft `json:"deregistered"`
 }
 
-func (l LookupService) GetAircraftByNNumber2(nNumber string) (*AircraftResponse, error) {
+func (l LookupService) GetAircraftByNNumber(nNumber string) (*AircraftResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -88,7 +89,7 @@ func (l LookupService) GetAircraftByNNumber2(nNumber string) (*AircraftResponse,
 	return resp, nil
 }
 
-func (l LookupService) GetAircraftBySerialNumber2(serialNumber string) (*AircraftResponse, error) {
+func (l LookupService) GetAircraftBySerialNumber(serialNumber string) (*AircraftResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -108,49 +109,43 @@ func (l LookupService) GetAircraftBySerialNumber2(serialNumber string) (*Aircraf
 	return resp, nil
 }
 
-func (l LookupService) GetOtherAircraftBySerialNumber2(nnumber string) (*AircraftResponse, error) {
+func (l LookupService) GetOtherAircraftWithSameSerialNumber(nnumber string) (*AircraftResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
+
 	a, err := l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
 	if err != nil {
 		return nil, err
 	}
-	return l.GetAircraftBySerialNumber2(a.A[0].SerialNumber)
+
+	if len(a.A) != 1 {
+		return nil, fmt.Errorf("expected one registered aircraft")
+	}
+
+	serialNumber := a.A[0].SerialNumber
+
+	resp := &AircraftResponse{}
+
+	m, _ := l.master.GetAircraft(ctx, &master.Query{SerialNumber: serialNumber})
+	resp.Registered = l.Augment(m)
+
+	r, _ := l.reserved.GetAircraft(ctx, &reserved.Query{SerialNumber: serialNumber})
+	resp.Reserved = l.Augment(r)
+
+	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	resp.Deregistered = l.Augment(d)
+
+	return resp, nil
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+// Master/Reserved/Dereg
 
-// Master
-
-func (l LookupService) GetAircraftByNNumber(nnumber string) (*master.Aircraft, error) {
+func (l LookupService) GetMasterByNNumber(nnumber string) (*master.Aircraft, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	return l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
 }
-
-func (l LookupService) GetAircraftByRegistrantName(registrantName string) (*master.Aircraft, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	return l.master.GetAircraft(ctx, &master.Query{RegistrantName: registrantName})
-}
-
-func (l LookupService) GetAircraftByRegistrantStreet1(registrantStreet1 string) (*master.Aircraft, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	return l.master.GetAircraft(ctx, &master.Query{RegistrantStreet1: registrantStreet1})
-}
-
-func (l LookupService) GetOtherAircraftByRegistrantName(nnumber string) (*master.Aircraft, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	a, err := l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
-	if err != nil {
-		return nil, err
-	}
-	return l.GetAircraftByRegistrantName(a.A[0].RegistrantName)
-}
-
-// Dereg
 
 func (l LookupService) GetDeregByNNumber(nnumber string) (*dereg.Aircraft, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -158,42 +153,20 @@ func (l LookupService) GetDeregByNNumber(nnumber string) (*dereg.Aircraft, error
 	return l.dereg.GetAircraft(ctx, &dereg.Query{NNumber: nnumber})
 }
 
-func (l LookupService) GetDeregBySerialNumber(serialNumber string) (*dereg.Aircraft, error) {
+func (l LookupService) GetReservedByNNumber(nnumber string) (*reserved.Aircraft, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	return l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	return l.reserved.GetAircraft(ctx, &reserved.Query{NNumber: nnumber})
 }
 
-func (l LookupService) GetOtherDeregBySerialNumber(nnumber string) (*dereg.Aircraft, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	a, err := l.dereg.GetAircraft(ctx, &dereg.Query{NNumber: nnumber})
-	if err != nil {
-		return nil, err
-	}
-	return l.GetDeregBySerialNumber(a.A[0].SerialNumber)
-}
-
-// Reserved
-
-func (l LookupService) GetReservedByNNumber(nnumber string) (*dereg.Aircraft, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	return l.dereg.GetAircraft(ctx, &dereg.Query{NNumber: nnumber})
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
-// Aircraft Type
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Aircraft & Engine Type
 
 func (l LookupService) GetAircraftType(code string) (*aircraft.AircraftType, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	return l.aircraft.GetAircraftType(ctx, &aircraft.Query{ManufacturerModelSeries: code})
 }
-
-// Engine Type
 
 func (l LookupService) GetEngineType(code string) (*engine.EngineType, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -202,7 +175,7 @@ func (l LookupService) GetEngineType(code string) (*engine.EngineType, error) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
+// Augment
 
 func (l LookupService) Augment(a interface{}) AugmentedAircraft {
 
@@ -226,7 +199,7 @@ func (l LookupService) AugmentToBytes(a interface{}) []byte {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
+// Marshal
 
 func ToBytes(a interface{}) []byte {
 	switch v := a.(type) {

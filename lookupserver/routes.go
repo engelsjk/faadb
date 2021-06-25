@@ -8,61 +8,78 @@ import (
 
 func addRoutes(e *echo.Echo, l *LookupService) {
 
-	e.GET("/aircraft", func(c echo.Context) error {
-
-		nNumber := c.QueryParam("n")
-		registrantName := c.QueryParam("registrant_name")
-		sameRegistrantName := c.QueryParam("same_registrant_name")
-
-		// todo: clean up query param logic!
-
-		if nNumber != "" {
-			if sameRegistrantName == "true" {
-				r, _ := l.GetOtherAircraftByRegistrantName(nNumber)
-				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
-			}
-			r, _ := l.GetAircraftByNNumber(nNumber)
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
-		}
-		if registrantName != "" {
-			r, _ := l.GetAircraftByRegistrantName(registrantName)
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
-		}
-		return c.JSON(http.StatusBadRequest, "request not valid")
-	})
-
-	e.GET("/aircraft2", func(c echo.Context) error {
-		nNumber := c.QueryParam("n")
-		serialNumber := c.QueryParam("sn")
+	e.GET("/aircraft/n/:n", func(c echo.Context) error {
+		nNumber := c.Param("n")
 		sameSerialNumber := c.QueryParam("same_serial_number")
+		// todo: by same Registrant Name/Street/State
 
-		if nNumber != "" {
-			if sameSerialNumber == "true" {
-				r, _ := l.GetOtherAircraftBySerialNumber2(nNumber)
-				return c.JSONBlob(http.StatusOK, ToBytes(r))
+		if nNumber == "" {
+			return c.JSON(http.StatusBadRequest, "nnumber required")
+		}
+		if sameSerialNumber == "true" {
+			r, err := l.GetOtherAircraftWithSameSerialNumber(nNumber)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, err.Error())
 			}
-			r, _ := l.GetAircraftByNNumber2(nNumber)
 			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
-		if serialNumber != "" {
-			r, _ := l.GetAircraftBySerialNumber2(serialNumber)
-			return c.JSONBlob(http.StatusOK, ToBytes(r))
+
+		r, err := l.GetAircraftByNNumber(nNumber)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		return c.JSON(http.StatusBadRequest, "request not valid")
+		return c.JSONBlob(http.StatusOK, ToBytes(r))
 	})
 
-	e.GET("/dereg", func(c echo.Context) error {
-		nNumber := c.QueryParam("n")
-		sameSerialNumber := c.QueryParam("same_serial_number")
+	e.GET("/aircraft/sn/:sn", func(c echo.Context) error {
+		serialNumber := c.Param("sn")
+		// todo: by same Registrant Name/Street/State
 
-		if nNumber != "" {
-			if sameSerialNumber == "true" {
-				r, _ := l.GetOtherDeregBySerialNumber(nNumber)
-				return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
-			}
-			r, _ := l.GetDeregByNNumber(nNumber)
-			return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
+		if serialNumber == "" {
+			return c.JSON(http.StatusBadRequest, "serial number required")
 		}
-		return c.JSON(http.StatusBadRequest, "request not valid")
+		r, err := l.GetAircraftBySerialNumber(serialNumber)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSONBlob(http.StatusOK, ToBytes(r))
+	})
+
+	///////////////////////////////////////
+
+	e.GET("/registered/n/:n", func(c echo.Context) error {
+		nNumber := c.Param("n")
+		if nNumber == "" {
+			return c.JSON(http.StatusBadRequest, "nnumber required")
+		}
+		r, err := l.GetMasterByNNumber(nNumber)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
+	})
+
+	e.GET("/reserved/n/:n", func(c echo.Context) error {
+		nNumber := c.Param("n")
+		if nNumber == "" {
+			return c.JSON(http.StatusBadRequest, "nnumber required")
+		}
+		r, err := l.GetReservedByNNumber(nNumber)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
+	})
+
+	e.GET("/deregistered/n/:n", func(c echo.Context) error {
+		nNumber := c.Param("n")
+		if nNumber == "" {
+			return c.JSON(http.StatusBadRequest, "nnumber required")
+		}
+		r, err := l.GetDeregByNNumber(nNumber)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSONBlob(http.StatusOK, l.AugmentToBytes(r))
 	})
 }
