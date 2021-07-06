@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -77,13 +78,22 @@ func (l LookupService) GetAircraftByNNumber(nNumber string) (*AircraftResponse, 
 
 	// todo: add error handling
 
-	m, _ := l.master.GetAircraft(ctx, &master.Query{NNumber: nNumber})
+	m, err := l.master.GetAircraft(ctx, &master.Query{NNumber: nNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Registered = l.Augment(m)
 
-	r, _ := l.reserved.GetAircraft(ctx, &reserved.Query{NNumber: nNumber})
+	r, err := l.reserved.GetAircraft(ctx, &reserved.Query{NNumber: nNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Reserved = l.Augment(r)
 
-	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{NNumber: nNumber})
+	d, err := l.dereg.GetAircraft(ctx, &dereg.Query{NNumber: nNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Deregistered = l.Augment(d)
 
 	return resp, nil
@@ -104,6 +114,23 @@ func (l LookupService) GetAircraftBySerialNumber(serialNumber string) (*Aircraft
 	resp.Reserved = l.Augment(r)
 
 	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	resp.Deregistered = l.Augment(d)
+
+	return resp, nil
+}
+
+func (l LookupService) GetAircraftByModeSCodeHex(modeSCodeHex string) (*AircraftResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	resp := &AircraftResponse{}
+
+	// todo: add error handling
+
+	m, _ := l.master.GetAircraft(ctx, &master.Query{ModeSCodeHex: modeSCodeHex})
+	resp.Registered = l.Augment(m)
+
+	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{ModeSCodeHex: modeSCodeHex})
 	resp.Deregistered = l.Augment(d)
 
 	return resp, nil
@@ -133,6 +160,35 @@ func (l LookupService) GetOtherAircraftWithSameSerialNumber(nnumber string) (*Ai
 	resp.Reserved = l.Augment(r)
 
 	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	resp.Deregistered = l.Augment(d)
+
+	return resp, nil
+}
+
+func (l LookupService) GetOtherAircraftWithSameRegistrantName(nnumber string) (*AircraftResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	a, err := l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("%+v\n", a)
+	if len(a.A) != 1 {
+		return nil, fmt.Errorf("expected one registered aircraft")
+	}
+
+	registrantName := a.A[0].RegistrantName
+
+	resp := &AircraftResponse{}
+
+	m, _ := l.master.GetAircraft(ctx, &master.Query{RegistrantName: registrantName})
+	resp.Registered = l.Augment(m)
+
+	r, _ := l.reserved.GetAircraft(ctx, &reserved.Query{RegistrantName: registrantName})
+	resp.Reserved = l.Augment(r)
+
+	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{RegistrantName: registrantName})
 	resp.Deregistered = l.Augment(d)
 
 	return resp, nil

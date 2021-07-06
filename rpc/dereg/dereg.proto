@@ -13,9 +13,10 @@ service Dereg {
 message Query {
   string NNumber = 1;
   string SerialNumber = 2;
-  string RegistrantName = 3; 
-  string RegistrantStreet1 = 4;
-  string RegistrantState = 5; 
+  string ModeSCodeHex = 3;
+  string RegistrantName = 4; 
+  string RegistrantStreet1 = 5;
+  string RegistrantState = 6; 
 }
 
 // A.

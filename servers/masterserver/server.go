@@ -32,6 +32,9 @@ func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.
 	if query.SerialNumber != "" {
 		bs, err = s.master.svc.List("serial_number", query.SerialNumber, "serial_number", true)
 	}
+	if query.ModeSCodeHex != "" {
+		bs, err = s.master.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true)
+	}
 	if query.RegistrantName != "" {
 		bs, err = s.master.svc.List("registrant_name", query.RegistrantName, "registrant.name", true)
 	}
