@@ -173,7 +173,6 @@ func (l LookupService) GetOtherAircraftWithSameRegistrantName(nnumber string) (*
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("%+v\n", a)
 	if len(a.A) != 1 {
 		return nil, fmt.Errorf("expected one registered aircraft")
 	}

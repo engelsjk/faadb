@@ -1,7 +1,6 @@
 package lookupserver
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -24,7 +23,6 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
 		if sameRegistrantName == "true" {
-			fmt.Println("same registrant name")
 			r, err := l.GetOtherAircraftWithSameRegistrantName(nNumber)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err.Error())
