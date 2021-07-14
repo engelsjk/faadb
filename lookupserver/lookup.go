@@ -105,15 +105,22 @@ func (l LookupService) GetAircraftBySerialNumber(serialNumber string) (*Aircraft
 
 	resp := &AircraftResponse{}
 
-	// todo: add error handling
-
-	m, _ := l.master.GetAircraft(ctx, &master.Query{SerialNumber: serialNumber})
+	m, err := l.master.GetAircraft(ctx, &master.Query{SerialNumber: serialNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Registered = l.Augment(m)
 
-	r, _ := l.reserved.GetAircraft(ctx, &reserved.Query{SerialNumber: serialNumber})
+	r, err := l.reserved.GetAircraft(ctx, &reserved.Query{SerialNumber: serialNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Reserved = l.Augment(r)
 
-	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	d, err := l.dereg.GetAircraft(ctx, &dereg.Query{SerialNumber: serialNumber})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Deregistered = l.Augment(d)
 
 	return resp, nil
@@ -125,12 +132,16 @@ func (l LookupService) GetAircraftByModeSCodeHex(modeSCodeHex string) (*Aircraft
 
 	resp := &AircraftResponse{}
 
-	// todo: add error handling
-
-	m, _ := l.master.GetAircraft(ctx, &master.Query{ModeSCodeHex: modeSCodeHex})
+	m, err := l.master.GetAircraft(ctx, &master.Query{ModeSCodeHex: modeSCodeHex})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Registered = l.Augment(m)
 
-	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{ModeSCodeHex: modeSCodeHex})
+	d, err := l.dereg.GetAircraft(ctx, &dereg.Query{ModeSCodeHex: modeSCodeHex})
+	if err != nil {
+		log.Println(err.Error())
+	}
 	resp.Deregistered = l.Augment(d)
 
 	return resp, nil
