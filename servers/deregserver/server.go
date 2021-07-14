@@ -32,11 +32,14 @@ func (s *Server) GetAircraft(ctx context.Context, query *dereg.Query) (*dereg.Ai
 	if query.SerialNumber != "" {
 		bs, err = s.dereg.svc.List("serial_number", query.SerialNumber, "serial_number", true)
 	}
+	if query.ModeSCodeHex != "" {
+		bs, err = s.dereg.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true)
+	}
 	if query.RegistrantName != "" {
 		bs, err = s.dereg.svc.List("registrant_name", query.RegistrantName, "registrant.name", true)
 	}
 	if query.RegistrantStreet1 != "" {
-		bs, err = s.dereg.svc.List("registrant_street_1", query.RegistrantName, "registrant.street_1", true)
+		bs, err = s.dereg.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true)
 	}
 	if query.RegistrantState != "" {
 		bs, err = s.dereg.svc.List("registrant_state", query.RegistrantState, "registrant.state", true)

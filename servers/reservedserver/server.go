@@ -36,7 +36,7 @@ func (s *Server) GetAircraft(ctx context.Context, query *reserved.Query) (*reser
 		bs, err = s.reserved.svc.List("registrant_name", query.RegistrantName, "registrant.name", true)
 	}
 	if query.RegistrantStreet1 != "" {
-		bs, err = s.reserved.svc.List("registrant_street_1", query.RegistrantName, "registrant.street_1", true)
+		bs, err = s.reserved.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true)
 	}
 	if query.RegistrantState != "" {
 		bs, err = s.reserved.svc.List("registrant_state", query.RegistrantState, "registrant.state", true)

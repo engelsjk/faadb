@@ -12,6 +12,7 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 		nNumber := c.Param("n")
 		sameSerialNumber := c.QueryParam("same_serial_number")
 		sameRegistrantName := c.QueryParam("same_registrant_name")
+		sameRegistrantStreet := c.QueryParam("same_registrant_street")
 		if nNumber == "" {
 			return c.JSON(http.StatusBadRequest, "nnumber required")
 		}
@@ -24,6 +25,13 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 		}
 		if sameRegistrantName == "true" {
 			r, err := l.GetOtherAircraftWithSameRegistrantName(nNumber)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, err.Error())
+			}
+			return c.JSONBlob(http.StatusOK, ToBytes(r))
+		}
+		if sameRegistrantStreet == "true" {
+			r, err := l.GetOtherAircraftWithSameRegistrantStreet(nNumber)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err.Error())
 			}

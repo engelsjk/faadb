@@ -41,6 +41,9 @@ func NewDeregService(dataPath, dbPath string, reload bool) (*DeregService, error
 	if err := d.svc.CreateIndexJSON("serial_number", "*", "serial_number"); err != nil {
 		return nil, err
 	}
+	if err := d.svc.CreateIndexJSON("mode_s_code_hex", "*", "mode_s.code_hex"); err != nil {
+		return nil, err
+	}
 	if err := d.svc.CreateIndexJSON("registrant_name", "*", "registrant.name"); err != nil {
 		return nil, err
 	}

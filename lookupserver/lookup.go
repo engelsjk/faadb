@@ -204,6 +204,34 @@ func (l LookupService) GetOtherAircraftWithSameRegistrantName(nnumber string) (*
 	return resp, nil
 }
 
+func (l LookupService) GetOtherAircraftWithSameRegistrantStreet(nnumber string) (*AircraftResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	a, err := l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
+	if err != nil {
+		return nil, err
+	}
+	if len(a.A) != 1 {
+		return nil, fmt.Errorf("expected one registered aircraft")
+	}
+
+	registrantStreet1 := a.A[0].RegistrantStreet1
+
+	resp := &AircraftResponse{}
+
+	m, _ := l.master.GetAircraft(ctx, &master.Query{RegistrantStreet1: registrantStreet1})
+	resp.Registered = l.Augment(m)
+
+	r, _ := l.reserved.GetAircraft(ctx, &reserved.Query{RegistrantStreet1: registrantStreet1})
+	resp.Reserved = l.Augment(r)
+
+	d, _ := l.dereg.GetAircraft(ctx, &dereg.Query{RegistrantStreet1: registrantStreet1})
+	resp.Deregistered = l.Augment(d)
+
+	return resp, nil
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Master/Reserved/Dereg
 
