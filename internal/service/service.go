@@ -67,12 +67,12 @@ func (s *Service) Get(key string) ([][]byte, error) {
 	return s.db.Get(key)
 }
 
-func (s *Service) List(index, match, pattern string, exact bool) ([][]byte, error) {
+func (s *Service) List(index, match, pattern string, exact bool, filters map[string]string) ([][]byte, error) {
 	match = utils.ToUpper(match)
 	if exact {
-		return s.db.ListExact(index, match, pattern)
+		return s.db.ListExact(index, match, pattern, filters)
 	}
-	return s.db.ListWildcard(index, match, pattern)
+	return s.db.ListWildcard(index, match, pattern, filters)
 }
 
 func (s *Service) StartsWith(index, starts_with string) ([][]byte, error) {

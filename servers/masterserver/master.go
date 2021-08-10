@@ -49,9 +49,6 @@ func NewMasterService(dataPath, dbPath string, reload bool) (*MasterService, err
 	if err := m.svc.CreateIndexJSON("registrant_street_1", "*", "registrant.street_1"); err != nil {
 		return nil, err
 	}
-	if err := m.svc.CreateIndexJSON("registrant_state", "*", "registrant.state"); err != nil {
-		return nil, err
-	}
 
 	return m, nil
 }
@@ -148,8 +145,8 @@ type Record struct {
 }
 
 type Certification struct {
-	AirworthinessClassification codes.Description
-	ApprovedOperation           codes.Description
+	AirworthinessClassification codes.Description `json:"airworthiness_classification"`
+	ApprovedOperation           codes.Description `json:"approved_operation"`
 }
 
 type Manufacturer struct {

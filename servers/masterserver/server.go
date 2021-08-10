@@ -19,6 +19,14 @@ func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.
 		bs  [][]byte
 		err error
 	)
+
+	filters := map[string]string{
+		"registrant.state":    query.RegistrantState,
+		"aircraft_model_code": query.AircraftModelCode,
+		"certification.airworthiness_classification.code": query.AirworthinessClassificationCode,
+		"certification.approved_operation.code":           query.ApprovedOperationCode,
+	}
+
 	if query.NNumber != "" {
 		nnumber := query.NNumber
 		exact := true
@@ -27,22 +35,19 @@ func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.
 			nnumber = string(r[1:])
 			exact = false
 		}
-		bs, err = s.master.svc.List("nnumber", nnumber, "nnumber", exact)
+		bs, err = s.master.svc.List("nnumber", nnumber, "nnumber", exact, filters)
 	}
 	if query.SerialNumber != "" {
-		bs, err = s.master.svc.List("serial_number", query.SerialNumber, "serial_number", true)
+		bs, err = s.master.svc.List("serial_number", query.SerialNumber, "serial_number", true, filters)
 	}
 	if query.ModeSCodeHex != "" {
-		bs, err = s.master.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true)
+		bs, err = s.master.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true, filters)
 	}
 	if query.RegistrantName != "" {
-		bs, err = s.master.svc.List("registrant_name", query.RegistrantName, "registrant.name", true)
+		bs, err = s.master.svc.List("registrant_name", query.RegistrantName, "registrant.name", true, filters)
 	}
 	if query.RegistrantStreet1 != "" {
-		bs, err = s.master.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true)
-	}
-	if query.RegistrantState != "" {
-		bs, err = s.master.svc.List("registrant_state", query.RegistrantState, "registrant.state", true)
+		bs, err = s.master.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true, filters)
 	}
 	if err != nil {
 		return nil, err
@@ -57,41 +62,43 @@ func bytesToA(b []byte) (*master.A, error) {
 		return nil, err
 	}
 	return &master.A{
-		NNumber:                                  record.NNumber,
-		SerialNumber:                             record.SerialNumber,
-		ManufacturerAircraftModelCode:            record.Manufacturer.AircraftModelCode,
-		ManufacturerEngineModelCode:              record.Manufacturer.EngineModelCode,
-		ManufacturerYear:                         record.Manufacturer.Year,
-		RegistrantType:                           record.Registrant.Type.Description,
-		RegistrantName:                           record.Registrant.Name,
-		RegistrantStreet1:                        record.Registrant.Street1,
-		RegistrantStreet2:                        record.Registrant.Street2,
-		RegistrantCity:                           record.Registrant.City,
-		RegistrantState:                          record.Registrant.State,
-		RegistrantZipCode:                        record.Registrant.ZipCode,
-		RegistrantRegion:                         record.Registrant.Region.Description,
-		RegistrantCounty:                         record.Registrant.County,
-		RegistrantCountry:                        record.Registrant.Country,
-		LastActivityDate:                         record.LastActivityDate,
-		CertificationIssueDate:                   record.CertificateIssueDate,
-		CertificationAirworthinessClassification: record.Certification.AirworthinessClassification.Description,
-		CertificationApprovedOperations:          record.Certification.ApprovedOperation.Description,
-		AircraftType:                             record.AircraftType.Description,
-		EngineType:                               record.EngineType.Description,
-		Status:                                   record.StatusCode.Description,
-		ModeSCode:                                record.ModeS.Code,
-		ModeSCodeHex:                             record.ModeS.CodeHex,
-		AirworthinessDate:                        record.AirworthinessDate,
-		OwnershipFractional:                      record.Ownership.Fractional.Status,
-		OwnershipOtherName1:                      record.Ownership.OtherName1,
-		OwnershipOtherName2:                      record.Ownership.OtherName2,
-		OwnershipOtherName3:                      record.Ownership.OtherName3,
-		OwnershipOtherName4:                      record.Ownership.OtherName4,
-		OwnershipOtherName5:                      record.Ownership.OtherName5,
-		ExpirationDate:                           record.ExpirationDate,
-		UniqueID:                                 record.UniqueID,
-		KitManufacturerName:                      record.Kit.ManufacturerName,
-		KitModelName:                             record.Kit.ModelName,
+		NNumber:                       record.NNumber,
+		SerialNumber:                  record.SerialNumber,
+		ManufacturerAircraftModelCode: record.Manufacturer.AircraftModelCode,
+		ManufacturerEngineModelCode:   record.Manufacturer.EngineModelCode,
+		ManufacturerYear:              record.Manufacturer.Year,
+		RegistrantType:                record.Registrant.Type.Description,
+		RegistrantName:                record.Registrant.Name,
+		RegistrantStreet1:             record.Registrant.Street1,
+		RegistrantStreet2:             record.Registrant.Street2,
+		RegistrantCity:                record.Registrant.City,
+		RegistrantState:               record.Registrant.State,
+		RegistrantZipCode:             record.Registrant.ZipCode,
+		RegistrantRegion:              record.Registrant.Region.Description,
+		RegistrantCounty:              record.Registrant.County,
+		RegistrantCountry:             record.Registrant.Country,
+		LastActivityDate:              record.LastActivityDate,
+		CertificationIssueDate:        record.CertificateIssueDate,
+		CertificationAirworthinessClassificationCode:        record.Certification.AirworthinessClassification.Code,
+		CertificationAirworthinessClassificationDescription: record.Certification.AirworthinessClassification.Description,
+		CertificationApprovedOperationCode:                  record.Certification.ApprovedOperation.Code,
+		CertificationApprovedOperationDescription:           record.Certification.ApprovedOperation.Description,
+		AircraftType:        record.AircraftType.Description,
+		EngineType:          record.EngineType.Description,
+		Status:              record.StatusCode.Description,
+		ModeSCode:           record.ModeS.Code,
+		ModeSCodeHex:        record.ModeS.CodeHex,
+		AirworthinessDate:   record.AirworthinessDate,
+		OwnershipFractional: record.Ownership.Fractional.Status,
+		OwnershipOtherName1: record.Ownership.OtherName1,
+		OwnershipOtherName2: record.Ownership.OtherName2,
+		OwnershipOtherName3: record.Ownership.OtherName3,
+		OwnershipOtherName4: record.Ownership.OtherName4,
+		OwnershipOtherName5: record.Ownership.OtherName5,
+		ExpirationDate:      record.ExpirationDate,
+		UniqueID:            record.UniqueID,
+		KitManufacturerName: record.Kit.ManufacturerName,
+		KitModelName:        record.Kit.ModelName,
 	}, nil
 }
 

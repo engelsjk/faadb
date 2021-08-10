@@ -15,8 +15,11 @@ message Query {
   string SerialNumber = 2;
   string ModeSCodeHex = 3;
   string RegistrantName = 4; 
-  string RegistrantStreet1 = 5;
-  string RegistrantState = 6; 
+  string RegistrantStreet1 = 5;   
+  string RegistrantState = 6;
+  string AircraftModelCode = 7;
+  string ApprovedOperationCode = 8;
+  string AirworthinessClassificationCode = 9;
 }
 
 // A.
@@ -44,22 +47,24 @@ message A {
   string RegistrantPhysicalZipCode = 21;
   string RegistrantPhysicalCounty = 22;
   string RegistrantPhysicalCountry = 23;
-  string CertificationAirworthinessClassification = 24;
-  string CertificationApprovedOperations = 25;
-  string AirworthinessDate = 26;
-  string CancelDate = 27;
-  string ExportCountry = 28;
-  string LastActivityDate = 29;
-  string CertificationIssueDate = 30;
-  string OwnershipOtherName1 = 31;
-  string OwnershipOtherName2 = 32;
-  string OwnershipOtherName3 = 33;
-  string OwnershipOtherName4 = 34;
-  string OwnershipOtherName5 = 35;
-  string KitManufacturerName = 36;
-  string KitModelName = 37;
-  string ModeSCode = 38;
-  string ModeSCodeHex = 39;
+  string CertificationAirworthinessClassificationCode = 24;
+  string CertificationAirworthinessClassificationDescription = 25;
+  string CertificationApprovedOperationCode = 26;
+  string CertificationApprovedOperationDescription = 27;
+  string AirworthinessDate = 28;
+  string CancelDate = 29;
+  string ExportCountry = 30;
+  string LastActivityDate = 31;
+  string CertificationIssueDate = 32;
+  string OwnershipOtherName1 = 33;
+  string OwnershipOtherName2 = 34;
+  string OwnershipOtherName3 = 35;
+  string OwnershipOtherName4 = 36;
+  string OwnershipOtherName5 = 37;
+  string KitManufacturerName = 38;
+  string KitModelName = 39;
+  string ModeSCode = 40;
+  string ModeSCodeHex = 41;
 }
 
 message Aircraft {

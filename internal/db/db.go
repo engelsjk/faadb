@@ -62,11 +62,14 @@ func (d *DB) Get(key string) ([][]byte, error) {
 	return vals, err
 }
 
-func (d *DB) ListExact(index, match, pattern string) ([][]byte, error) {
+func (d *DB) ListExact(index, match, pattern string, filters map[string]string) ([][]byte, error) {
 	var vals [][]byte
 	err := d.db.View(func(tx *buntdb.Tx) error {
 		err := tx.Ascend(index, func(key, val string) bool {
 			if match == gjson.Get(val, pattern).String() {
+				if !passFilters(filters, val) {
+					return true
+				}
 				vals = append(vals, []byte(val))
 			}
 			return true
@@ -76,12 +79,15 @@ func (d *DB) ListExact(index, match, pattern string) ([][]byte, error) {
 	return vals, err
 }
 
-func (d *DB) ListWildcard(index, match, pattern string) ([][]byte, error) {
+func (d *DB) ListWildcard(index, match, pattern string, filters map[string]string) ([][]byte, error) {
 	var vals [][]byte
 	err := d.db.View(func(tx *buntdb.Tx) error {
 		err := tx.Ascend(index, func(key, val string) bool {
 			item := gjson.Get(val, pattern).String()
 			if strings.Contains(item, match) {
+				if !passFilters(filters, val) {
+					return true
+				}
 				vals = append(vals, []byte(val))
 			}
 			return true
@@ -104,4 +110,21 @@ func (d *DB) StartsWith(index, starts_with string) ([][]byte, error) {
 		return err
 	})
 	return vals, err
+}
+
+func passFilters(filters map[string]string, val string) bool {
+	if filters == nil {
+		return true
+	}
+	for k, v := range filters {
+		if v == "" {
+			continue
+		}
+		item := gjson.Get(val, k)
+		// todo: parse listed items on delim ; then do something better than strings.Contains?
+		if !strings.Contains(item.String(), v) {
+			return false
+		}
+	}
+	return true
 }

@@ -46,11 +46,6 @@ func NewReserved(dataPath, dbPath string, reload bool) (*ReservedService, error)
 	if err := r.svc.CreateIndexJSON("registrant_street_1", "*", "registrant.street_1"); err != nil {
 		return nil, err
 	}
-	if err := r.svc.CreateIndexJSON("registrant_state", "*", "registrant.state"); err != nil {
-		return nil, err
-	}
-
-	// index: registrant.state?
 
 	return r, nil
 }

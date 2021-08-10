@@ -50,11 +50,6 @@ func NewDeregService(dataPath, dbPath string, reload bool) (*DeregService, error
 	if err := d.svc.CreateIndexJSON("registrant_street_1", "*", "registrant.street_1"); err != nil {
 		return nil, err
 	}
-	if err := d.svc.CreateIndexJSON("registrant_state", "*", "registrant.state"); err != nil {
-		return nil, err
-	}
-
-	// index: registrant.state?
 
 	return d, nil
 }
@@ -146,8 +141,8 @@ type Record struct {
 }
 
 type Certification struct {
-	AirworthinessClassification codes.Description
-	ApprovedOperation           codes.Description
+	AirworthinessClassification codes.Description `json:"airworthiness_classification"`
+	ApprovedOperation           codes.Description `json:"approved_operation"`
 }
 
 type Manufacturer struct {

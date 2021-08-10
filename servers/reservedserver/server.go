@@ -19,6 +19,14 @@ func (s *Server) GetAircraft(ctx context.Context, query *reserved.Query) (*reser
 		bs  [][]byte
 		err error
 	)
+
+	filters := map[string]string{
+		"registrant.state":    query.RegistrantState,
+		"aircraft_model_code": query.AircraftModelCode,
+		"certification.airworthiness_classification.code": query.AirworthinessClassificationCode,
+		"certification.approved_operation.code":           query.ApprovedOperationCode,
+	}
+
 	if query.NNumber != "" {
 		nnumber := query.NNumber
 		exact := true
@@ -27,19 +35,16 @@ func (s *Server) GetAircraft(ctx context.Context, query *reserved.Query) (*reser
 			nnumber = string(r[1:])
 			exact = false
 		}
-		bs, err = s.reserved.svc.List("nnumber", nnumber, "nnumber", exact)
+		bs, err = s.reserved.svc.List("nnumber", nnumber, "nnumber", exact, filters)
 	}
 	if query.SerialNumber != "" {
-		bs, err = s.reserved.svc.List("serial_number", query.SerialNumber, "serial_number", true)
+		bs, err = s.reserved.svc.List("serial_number", query.SerialNumber, "serial_number", true, filters)
 	}
 	if query.RegistrantName != "" {
-		bs, err = s.reserved.svc.List("registrant_name", query.RegistrantName, "registrant.name", true)
+		bs, err = s.reserved.svc.List("registrant_name", query.RegistrantName, "registrant.name", true, filters)
 	}
 	if query.RegistrantStreet1 != "" {
-		bs, err = s.reserved.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true)
-	}
-	if query.RegistrantState != "" {
-		bs, err = s.reserved.svc.List("registrant_state", query.RegistrantState, "registrant.state", true)
+		bs, err = s.reserved.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true, filters)
 	}
 	if err != nil {
 		return nil, err

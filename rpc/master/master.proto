@@ -9,14 +9,17 @@ service Master {
   rpc GetAircraft(Query) returns (Aircraft);
 }
 
-// Query for Aircraft (NNumber or Registrant).
+// Query for Aircraft.
 message Query {
   string NNumber = 1;
   string SerialNumber = 2;
   string ModeSCodeHex = 3;
   string RegistrantName = 4; 
-  string RegistrantStreet1 = 5;
-  string RegistrantState = 6; 
+  string RegistrantStreet1 = 5;  
+  string RegistrantState = 6;
+  string AircraftModelCode = 7;
+  string ApprovedOperationCode = 8;
+  string AirworthinessClassificationCode = 9;
 }
 
 // A.
@@ -38,24 +41,26 @@ message A {
   string RegistrantCountry = 15;
   string LastActivityDate = 16;
   string CertificationIssueDate = 17;
-  string CertificationAirworthinessClassification = 18;
-  string CertificationApprovedOperations = 19;
-  string AircraftType = 20;
-  string EngineType = 21;
-  string Status = 22;
-  string ModeSCode = 23;
-  string ModeSCodeHex = 24;
-  string AirworthinessDate = 25;
-  bool OwnershipFractional = 26;
-  string OwnershipOtherName1 = 27;
-  string OwnershipOtherName2 = 28;
-  string OwnershipOtherName3 = 29;
-  string OwnershipOtherName4 = 30;
-  string OwnershipOtherName5 = 31;
-  string ExpirationDate = 32;
-  string UniqueID = 33;
-  string KitManufacturerName = 34;
-  string KitModelName = 35;
+  string CertificationAirworthinessClassificationCode = 18;
+  string CertificationAirworthinessClassificationDescription = 19;
+  string CertificationApprovedOperationCode = 20;
+  string CertificationApprovedOperationDescription = 21;
+  string AircraftType = 22;
+  string EngineType = 23;
+  string Status = 24;
+  string ModeSCode = 25;
+  string ModeSCodeHex = 26;
+  string AirworthinessDate = 27;
+  bool OwnershipFractional = 28;
+  string OwnershipOtherName1 = 29;
+  string OwnershipOtherName2 = 30;
+  string OwnershipOtherName3 = 31;
+  string OwnershipOtherName4 = 32;
+  string OwnershipOtherName5 = 33;
+  string ExpirationDate = 34;
+  string UniqueID = 35;
+  string KitManufacturerName = 36;
+  string KitModelName = 37;
 }
 
 message Aircraft {

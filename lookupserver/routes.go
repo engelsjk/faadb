@@ -6,38 +6,68 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type Query struct {
+	NNumber           string
+	SerialNumber      string
+	ModeSCodeHex      string
+	RegistrantName    string
+	RegistrantStreet1 string
+}
+
+type Filter struct {
+	AircraftModelCode               string
+	RegistrantState                 string
+	AirworthinessClassificationCode string
+	ApprovedOperationCode           string
+}
+
 func addRoutes(e *echo.Echo, l *LookupService) {
 
 	e.GET("/aircraft/n/:n", func(c echo.Context) error {
 		nNumber := c.Param("n")
-		sameSerialNumber := c.QueryParam("same_serial_number")
-		sameRegistrantName := c.QueryParam("same_registrant_name")
-		sameRegistrantStreet := c.QueryParam("same_registrant_street")
+		serialNumber := c.QueryParam("serial_number")
+		registrantName := c.QueryParam("registrant_name")
+		registrantStreet := c.QueryParam("registrant_street")
+
 		if nNumber == "" {
 			return c.JSON(http.StatusBadRequest, "nnumber required")
 		}
-		if sameSerialNumber == "true" {
-			r, err := l.GetOtherAircraftWithSameSerialNumber(nNumber)
+		if serialNumber == "same" {
+			r, err := l.GetOtherAircraft(&Query{NNumber: nNumber, SerialNumber: serialNumber}, nil)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
-		if sameRegistrantName == "true" {
-			r, err := l.GetOtherAircraftWithSameRegistrantName(nNumber)
+		if registrantName == "same" {
+
+			registrantState := c.QueryParam("registrant_state")
+			aircraftModelCode := c.QueryParam("aircraft_model_code")
+			airworthinessClassificationCode := c.QueryParam("airworthiness_classification_code")
+			approvedOperationCode := c.QueryParam("approved_operation_code")
+
+			r, err := l.GetOtherAircraft(&Query{
+				NNumber:        nNumber,
+				RegistrantName: registrantName,
+			}, &Filter{
+				RegistrantState:                 registrantState,
+				AircraftModelCode:               aircraftModelCode,
+				AirworthinessClassificationCode: airworthinessClassificationCode,
+				ApprovedOperationCode:           approvedOperationCode,
+			})
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
-		if sameRegistrantStreet == "true" {
-			r, err := l.GetOtherAircraftWithSameRegistrantStreet(nNumber)
+		if registrantStreet == "same" {
+			r, err := l.GetOtherAircraft(&Query{NNumber: nNumber, RegistrantStreet1: registrantStreet}, nil)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			return c.JSONBlob(http.StatusOK, ToBytes(r))
 		}
-		r, err := l.GetAircraftByNNumber(nNumber)
+		r, err := l.GetAircraft(&Query{NNumber: nNumber}, nil)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
@@ -49,7 +79,7 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 		if serialNumber == "" {
 			return c.JSON(http.StatusBadRequest, "serial number required")
 		}
-		r, err := l.GetAircraftBySerialNumber(serialNumber)
+		r, err := l.GetAircraft(&Query{SerialNumber: serialNumber}, nil)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
@@ -61,7 +91,7 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 		if modeSCodeHex == "" {
 			return c.JSON(http.StatusBadRequest, "mode s code hex required")
 		}
-		r, err := l.GetAircraftByModeSCodeHex(modeSCodeHex)
+		r, err := l.GetAircraft(&Query{ModeSCodeHex: modeSCodeHex}, nil)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
