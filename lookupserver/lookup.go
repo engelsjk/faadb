@@ -123,9 +123,11 @@ func (l LookupService) GetOtherAircraft(query *Query, filter *Filter) (*Aircraft
 		return nil, fmt.Errorf("expected one registered aircraft")
 	}
 
-	// queries
-
 	// filters
+
+	if filter == nil {
+		filter = &Filter{}
+	}
 
 	if filter.RegistrantState == "same" {
 		filter.RegistrantState = a.A[0].RegistrantState
