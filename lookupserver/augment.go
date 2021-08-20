@@ -3,10 +3,10 @@ package lookupserver
 import (
 	"context"
 
+	"github.com/engelsjk/faadb/rpc/active"
 	"github.com/engelsjk/faadb/rpc/aircraft"
 	"github.com/engelsjk/faadb/rpc/dereg"
 	"github.com/engelsjk/faadb/rpc/engine"
-	"github.com/engelsjk/faadb/rpc/master"
 	"github.com/engelsjk/faadb/rpc/reserved"
 )
 
@@ -30,7 +30,7 @@ func (g Augmenter) AugmentA(ctx context.Context, a interface{}) *AugmentedA {
 	switch v := a.(type) {
 	case nil:
 		return aa
-	case *master.A:
+	case *active.A:
 		aircraftCode, engineCode = v.ManufacturerAircraftModelCode, v.ManufacturerEngineModelCode
 	case *reserved.A:
 		aircraftCode, engineCode = "", ""
@@ -58,7 +58,7 @@ func (g Augmenter) AugmentAircraft(ctx context.Context, a interface{}) Augmented
 	switch v := a.(type) {
 	case nil:
 		return nil
-	case *master.Aircraft:
+	case *active.Aircraft:
 		if v == nil {
 			return nil
 		}

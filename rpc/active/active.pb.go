@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.26.0
 // 	protoc        v3.16.0
-// source: master.proto
+// source: active.proto
 
-package master
+package active
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -40,7 +40,7 @@ type Query struct {
 func (x *Query) Reset() {
 	*x = Query{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_master_proto_msgTypes[0]
+		mi := &file_active_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -53,7 +53,7 @@ func (x *Query) String() string {
 func (*Query) ProtoMessage() {}
 
 func (x *Query) ProtoReflect() protoreflect.Message {
-	mi := &file_master_proto_msgTypes[0]
+	mi := &file_active_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -66,7 +66,7 @@ func (x *Query) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Query.ProtoReflect.Descriptor instead.
 func (*Query) Descriptor() ([]byte, []int) {
-	return file_master_proto_rawDescGZIP(), []int{0}
+	return file_active_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Query) GetNNumber() string {
@@ -180,7 +180,7 @@ type A struct {
 func (x *A) Reset() {
 	*x = A{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_master_proto_msgTypes[1]
+		mi := &file_active_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -193,7 +193,7 @@ func (x *A) String() string {
 func (*A) ProtoMessage() {}
 
 func (x *A) ProtoReflect() protoreflect.Message {
-	mi := &file_master_proto_msgTypes[1]
+	mi := &file_active_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -206,7 +206,7 @@ func (x *A) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use A.ProtoReflect.Descriptor instead.
 func (*A) Descriptor() ([]byte, []int) {
-	return file_master_proto_rawDescGZIP(), []int{1}
+	return file_active_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *A) GetNNumber() string {
@@ -479,7 +479,7 @@ type Aircraft struct {
 func (x *Aircraft) Reset() {
 	*x = Aircraft{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_master_proto_msgTypes[2]
+		mi := &file_active_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -492,7 +492,7 @@ func (x *Aircraft) String() string {
 func (*Aircraft) ProtoMessage() {}
 
 func (x *Aircraft) ProtoReflect() protoreflect.Message {
-	mi := &file_master_proto_msgTypes[2]
+	mi := &file_active_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -505,7 +505,7 @@ func (x *Aircraft) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Aircraft.ProtoReflect.Descriptor instead.
 func (*Aircraft) Descriptor() ([]byte, []int) {
-	return file_master_proto_rawDescGZIP(), []int{2}
+	return file_active_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Aircraft) GetA() []*A {
@@ -515,12 +515,12 @@ func (x *Aircraft) GetA() []*A {
 	return nil
 }
 
-var File_master_proto protoreflect.FileDescriptor
+var File_active_proto protoreflect.FileDescriptor
 
-var file_master_proto_rawDesc = []byte{
-	0x0a, 0x0c, 0x6d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x15,
-	0x65, 0x6e, 0x67, 0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2e, 0x6d,
-	0x61, 0x73, 0x74, 0x65, 0x72, 0x22, 0x97, 0x03, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12,
+var file_active_proto_rawDesc = []byte{
+	0x0a, 0x0c, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x15,
+	0x65, 0x6e, 0x67, 0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2e, 0x61,
+	0x63, 0x74, 0x69, 0x76, 0x65, 0x22, 0x97, 0x03, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12,
 	0x18, 0x0a, 0x07, 0x4e, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x07, 0x4e, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x22, 0x0a, 0x0c, 0x53, 0x65, 0x72,
 	0x69, 0x61, 0x6c, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
@@ -662,41 +662,41 @@ var file_master_proto_rawDesc = []byte{
 	0x25, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x4b, 0x69, 0x74, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x4e,
 	0x61, 0x6d, 0x65, 0x22, 0x32, 0x0a, 0x08, 0x41, 0x69, 0x72, 0x63, 0x72, 0x61, 0x66, 0x74, 0x12,
 	0x26, 0x0a, 0x01, 0x41, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x65, 0x6e, 0x67,
-	0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2e, 0x6d, 0x61, 0x73, 0x74,
-	0x65, 0x72, 0x2e, 0x41, 0x52, 0x01, 0x41, 0x32, 0x56, 0x0a, 0x06, 0x4d, 0x61, 0x73, 0x74, 0x65,
-	0x72, 0x12, 0x4c, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x41, 0x69, 0x72, 0x63, 0x72, 0x61, 0x66, 0x74,
+	0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2e, 0x61, 0x63, 0x74, 0x69,
+	0x76, 0x65, 0x2e, 0x41, 0x52, 0x01, 0x41, 0x32, 0x56, 0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x76,
+	0x65, 0x12, 0x4c, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x41, 0x69, 0x72, 0x63, 0x72, 0x61, 0x66, 0x74,
 	0x12, 0x1c, 0x2e, 0x65, 0x6e, 0x67, 0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64,
-	0x62, 0x2e, 0x6d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x1f,
+	0x62, 0x2e, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x1f,
 	0x2e, 0x65, 0x6e, 0x67, 0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2e, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2e,
-	0x6d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x2e, 0x41, 0x69, 0x72, 0x63, 0x72, 0x61, 0x66, 0x74, 0x42,
+	0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x2e, 0x41, 0x69, 0x72, 0x63, 0x72, 0x61, 0x66, 0x74, 0x42,
 	0x2d, 0x5a, 0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65, 0x6e,
 	0x67, 0x65, 0x6c, 0x73, 0x6a, 0x6b, 0x2f, 0x66, 0x61, 0x61, 0x64, 0x62, 0x2f, 0x72, 0x70, 0x63,
-	0x2f, 0x6d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x3b, 0x6d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x62, 0x06,
+	0x2f, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x3b, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x62, 0x06,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_master_proto_rawDescOnce sync.Once
-	file_master_proto_rawDescData = file_master_proto_rawDesc
+	file_active_proto_rawDescOnce sync.Once
+	file_active_proto_rawDescData = file_active_proto_rawDesc
 )
 
-func file_master_proto_rawDescGZIP() []byte {
-	file_master_proto_rawDescOnce.Do(func() {
-		file_master_proto_rawDescData = protoimpl.X.CompressGZIP(file_master_proto_rawDescData)
+func file_active_proto_rawDescGZIP() []byte {
+	file_active_proto_rawDescOnce.Do(func() {
+		file_active_proto_rawDescData = protoimpl.X.CompressGZIP(file_active_proto_rawDescData)
 	})
-	return file_master_proto_rawDescData
+	return file_active_proto_rawDescData
 }
 
-var file_master_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_master_proto_goTypes = []interface{}{
-	(*Query)(nil),    // 0: engelsjk.faadb.master.Query
-	(*A)(nil),        // 1: engelsjk.faadb.master.A
-	(*Aircraft)(nil), // 2: engelsjk.faadb.master.Aircraft
+var file_active_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_active_proto_goTypes = []interface{}{
+	(*Query)(nil),    // 0: engelsjk.faadb.active.Query
+	(*A)(nil),        // 1: engelsjk.faadb.active.A
+	(*Aircraft)(nil), // 2: engelsjk.faadb.active.Aircraft
 }
-var file_master_proto_depIdxs = []int32{
-	1, // 0: engelsjk.faadb.master.Aircraft.A:type_name -> engelsjk.faadb.master.A
-	0, // 1: engelsjk.faadb.master.Master.GetAircraft:input_type -> engelsjk.faadb.master.Query
-	2, // 2: engelsjk.faadb.master.Master.GetAircraft:output_type -> engelsjk.faadb.master.Aircraft
+var file_active_proto_depIdxs = []int32{
+	1, // 0: engelsjk.faadb.active.Aircraft.A:type_name -> engelsjk.faadb.active.A
+	0, // 1: engelsjk.faadb.active.Active.GetAircraft:input_type -> engelsjk.faadb.active.Query
+	2, // 2: engelsjk.faadb.active.Active.GetAircraft:output_type -> engelsjk.faadb.active.Aircraft
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -704,13 +704,13 @@ var file_master_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_master_proto_init() }
-func file_master_proto_init() {
-	if File_master_proto != nil {
+func init() { file_active_proto_init() }
+func file_active_proto_init() {
+	if File_active_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_master_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_active_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Query); i {
 			case 0:
 				return &v.state
@@ -722,7 +722,7 @@ func file_master_proto_init() {
 				return nil
 			}
 		}
-		file_master_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_active_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*A); i {
 			case 0:
 				return &v.state
@@ -734,7 +734,7 @@ func file_master_proto_init() {
 				return nil
 			}
 		}
-		file_master_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_active_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Aircraft); i {
 			case 0:
 				return &v.state
@@ -751,18 +751,18 @@ func file_master_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_master_proto_rawDesc,
+			RawDescriptor: file_active_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_master_proto_goTypes,
-		DependencyIndexes: file_master_proto_depIdxs,
-		MessageInfos:      file_master_proto_msgTypes,
+		GoTypes:           file_active_proto_goTypes,
+		DependencyIndexes: file_active_proto_depIdxs,
+		MessageInfos:      file_active_proto_msgTypes,
 	}.Build()
-	File_master_proto = out.File
-	file_master_proto_rawDesc = nil
-	file_master_proto_goTypes = nil
-	file_master_proto_depIdxs = nil
+	File_active_proto = out.File
+	file_active_proto_rawDesc = nil
+	file_active_proto_goTypes = nil
+	file_active_proto_depIdxs = nil
 }

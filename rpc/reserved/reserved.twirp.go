@@ -38,7 +38,7 @@ const _ = twirp.TwirpPackageIsVersion7
 // Reserved Interface
 // ==================
 
-// Master service.
+// Reserved service.
 type Reserved interface {
 	// GetAircraft returns a Aircraft from a Query.
 	GetAircraft(context.Context, *Query) (*Aircraft, error)

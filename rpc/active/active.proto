@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package engelsjk.faadb.master;
-option go_package = "github.com/engelsjk/faadb/rpc/master;master";
+package engelsjk.faadb.active;
+option go_package = "github.com/engelsjk/faadb/rpc/active;active";
 
-// Master service.
-service Master {
+// Active service.
+service Active {
   // GetAircraft returns a Aircraft from a Query.
   rpc GetAircraft(Query) returns (Aircraft);
 }

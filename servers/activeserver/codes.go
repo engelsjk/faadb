@@ -1,4 +1,4 @@
-package masterserver
+package activeserver
 
 import (
 	"strings"

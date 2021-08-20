@@ -3,7 +3,7 @@ syntax = "proto3";
 package engelsjk.faadb.reserved;
 option go_package = "github.com/engelsjk/faadb/rpc/reserved;reserved";
 
-// Master service.
+// Reserved service.
 service Reserved {
   // GetAircraft returns a Aircraft from a Query.
   rpc GetAircraft(Query) returns (Aircraft);

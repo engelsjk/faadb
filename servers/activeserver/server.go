@@ -1,20 +1,20 @@
-package masterserver
+package activeserver
 
 import (
 	"context"
 
-	"github.com/engelsjk/faadb/rpc/master"
+	"github.com/engelsjk/faadb/rpc/active"
 )
 
 type Server struct {
-	master *MasterService
+	active *ActiveService
 }
 
-func NewServer(master *MasterService) *Server {
-	return &Server{master: master}
+func NewServer(active *ActiveService) *Server {
+	return &Server{active: active}
 }
 
-func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.Aircraft, error) {
+func (s *Server) GetAircraft(ctx context.Context, query *active.Query) (*active.Aircraft, error) {
 	var (
 		bs  [][]byte
 		err error
@@ -35,19 +35,19 @@ func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.
 			nnumber = string(r[1:])
 			exact = false
 		}
-		bs, err = s.master.svc.List("nnumber", nnumber, "nnumber", exact, filters)
+		bs, err = s.active.svc.List("nnumber", nnumber, "nnumber", exact, filters)
 	}
 	if query.SerialNumber != "" {
-		bs, err = s.master.svc.List("serial_number", query.SerialNumber, "serial_number", true, filters)
+		bs, err = s.active.svc.List("serial_number", query.SerialNumber, "serial_number", true, filters)
 	}
 	if query.ModeSCodeHex != "" {
-		bs, err = s.master.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true, filters)
+		bs, err = s.active.svc.List("mode_s_code_hex", query.ModeSCodeHex, "mode_s.code_hex", true, filters)
 	}
 	if query.RegistrantName != "" {
-		bs, err = s.master.svc.List("registrant_name", query.RegistrantName, "registrant.name", true, filters)
+		bs, err = s.active.svc.List("registrant_name", query.RegistrantName, "registrant.name", true, filters)
 	}
 	if query.RegistrantStreet1 != "" {
-		bs, err = s.master.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true, filters)
+		bs, err = s.active.svc.List("registrant_street_1", query.RegistrantStreet1, "registrant.street_1", true, filters)
 	}
 	if err != nil {
 		return nil, err
@@ -55,13 +55,13 @@ func (s *Server) GetAircraft(ctx context.Context, query *master.Query) (*master.
 	return bytesToAircraft(bs)
 }
 
-func bytesToA(b []byte) (*master.A, error) {
+func bytesToA(b []byte) (*active.A, error) {
 	record := &Record{}
 	err := record.UnmarshalJSON(b)
 	if err != nil {
 		return nil, err
 	}
-	return &master.A{
+	return &active.A{
 		NNumber:                       record.NNumber,
 		SerialNumber:                  record.SerialNumber,
 		ManufacturerAircraftModelCode: record.Manufacturer.AircraftModelCode,
@@ -102,8 +102,8 @@ func bytesToA(b []byte) (*master.A, error) {
 	}, nil
 }
 
-func bytesToAircraft(bs [][]byte) (*master.Aircraft, error) {
-	as := make([]*master.A, len(bs))
+func bytesToAircraft(bs [][]byte) (*active.Aircraft, error) {
+	as := make([]*active.A, len(bs))
 	for i, b := range bs {
 		a, err := bytesToA(b)
 		if err != nil {
@@ -111,5 +111,5 @@ func bytesToAircraft(bs [][]byte) (*master.Aircraft, error) {
 		}
 		as[i] = a
 	}
-	return &master.Aircraft{A: as}, nil
+	return &active.Aircraft{A: as}, nil
 }

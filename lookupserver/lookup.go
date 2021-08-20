@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/engelsjk/faadb/rpc/active"
 	"github.com/engelsjk/faadb/rpc/aircraft"
 	"github.com/engelsjk/faadb/rpc/dereg"
 	"github.com/engelsjk/faadb/rpc/engine"
-	"github.com/engelsjk/faadb/rpc/master"
 	"github.com/engelsjk/faadb/rpc/reserved"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -22,7 +22,7 @@ var (
 
 type LookupService struct {
 	Name      string
-	master    master.Master
+	active    active.Active
 	aircraft  aircraft.Aircraft
 	engine    engine.Engine
 	reserved  reserved.Reserved
@@ -31,7 +31,7 @@ type LookupService struct {
 }
 
 type Options struct {
-	MasterAddr   string
+	ActiveAddr   string
 	AircraftAddr string
 	EngineAddr   string
 	ReservedAddr string
@@ -39,7 +39,7 @@ type Options struct {
 }
 
 type QuerySet struct {
-	master   *master.Query
+	active   *active.Query
 	reserved *reserved.Query
 	dereg    *dereg.Query
 }
@@ -48,7 +48,7 @@ func NewLookupService(opts Options) *LookupService {
 
 	client := &http.Client{} // one client (??)
 
-	m := master.NewMasterProtobufClient(opts.MasterAddr, client)
+	m := active.NewActiveProtobufClient(opts.ActiveAddr, client)
 	a := aircraft.NewAircraftProtobufClient(opts.AircraftAddr, client)
 	e := engine.NewEngineProtobufClient(opts.EngineAddr, client)
 	r := reserved.NewReservedProtobufClient(opts.ReservedAddr, client)
@@ -61,7 +61,7 @@ func NewLookupService(opts Options) *LookupService {
 
 	return &LookupService{
 		Name:      "lookup",
-		master:    m,
+		active:    m,
 		aircraft:  a,
 		engine:    e,
 		reserved:  r,
@@ -71,7 +71,7 @@ func NewLookupService(opts Options) *LookupService {
 }
 
 type AircraftResponse struct {
-	Registered   AugmentedAircraft `json:"registered"`
+	Active       AugmentedAircraft `json:"active"`
 	Reserved     AugmentedAircraft `json:"reserved"`
 	Deregistered AugmentedAircraft `json:"deregistered"`
 }
@@ -86,11 +86,11 @@ func (l LookupService) GetAircraft(query *Query, filter *Filter) (*AircraftRespo
 
 	querySet := queryToQuerySet(query, filter)
 
-	m, err := l.master.GetAircraft(ctx, querySet.master)
+	m, err := l.active.GetAircraft(ctx, querySet.active)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	resp.Registered = l.Augment(m)
+	resp.Active = l.Augment(m)
 
 	r, err := l.reserved.GetAircraft(ctx, querySet.reserved)
 	if err != nil {
@@ -112,9 +112,9 @@ func (l LookupService) GetOtherAircraft(query *Query, filter *Filter) (*Aircraft
 	defer cancel()
 
 	querySet := queryToQuerySet(nil, nil)
-	querySet.master.NNumber = query.NNumber
+	querySet.active.NNumber = query.NNumber
 
-	a, err := l.master.GetAircraft(ctx, querySet.master)
+	a, err := l.active.GetAircraft(ctx, querySet.active)
 	if err != nil {
 		return nil, err
 	}
@@ -149,29 +149,29 @@ func (l LookupService) GetOtherAircraft(query *Query, filter *Filter) (*Aircraft
 
 	if query.SerialNumber == "same" {
 		serialNumber := a.A[0].SerialNumber
-		querySet.master.SerialNumber = serialNumber
+		querySet.active.SerialNumber = serialNumber
 		querySet.reserved.SerialNumber = serialNumber
 		querySet.dereg.SerialNumber = serialNumber
 	}
 
 	if query.RegistrantName == "same" {
 		registrantName := a.A[0].RegistrantName
-		querySet.master.RegistrantName = registrantName
+		querySet.active.RegistrantName = registrantName
 		querySet.reserved.RegistrantName = registrantName
 		querySet.dereg.RegistrantName = registrantName
 	}
 
 	if query.RegistrantStreet1 == "same" {
 		registrantStreet1 := a.A[0].RegistrantStreet1
-		querySet.master.RegistrantStreet1 = registrantStreet1
+		querySet.active.RegistrantStreet1 = registrantStreet1
 		querySet.reserved.RegistrantStreet1 = registrantStreet1
 		querySet.dereg.RegistrantStreet1 = registrantStreet1
 	}
 
 	resp := &AircraftResponse{}
 
-	m, _ := l.master.GetAircraft(ctx, querySet.master)
-	resp.Registered = l.Augment(m)
+	m, _ := l.active.GetAircraft(ctx, querySet.active)
+	resp.Active = l.Augment(m)
 
 	r, _ := l.reserved.GetAircraft(ctx, querySet.reserved)
 	resp.Reserved = l.Augment(r)
@@ -183,12 +183,12 @@ func (l LookupService) GetOtherAircraft(query *Query, filter *Filter) (*Aircraft
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// Master/Reserved/Dereg
+// Active/Reserved/Dereg
 
-func (l LookupService) GetMasterByNNumber(nnumber string) (*master.Aircraft, error) {
+func (l LookupService) GetActiveByNNumber(nnumber string) (*active.Aircraft, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	return l.master.GetAircraft(ctx, &master.Query{NNumber: nnumber})
+	return l.active.GetAircraft(ctx, &active.Query{NNumber: nnumber})
 }
 
 func (l LookupService) GetDeregByNNumber(nnumber string) (*dereg.Aircraft, error) {
@@ -227,11 +227,11 @@ func (l LookupService) Augment(a interface{}) AugmentedAircraft {
 	defer cancel()
 
 	switch v := a.(type) {
-	case *master.A, *reserved.A, *dereg.A:
+	case *active.A, *reserved.A, *dereg.A:
 		augmentedAircraft := make(AugmentedAircraft, 1)
 		augmentedAircraft[0] = l.augmenter.AugmentA(ctx, v)
 		return augmentedAircraft
-	case *master.Aircraft, *reserved.Aircraft, *dereg.Aircraft:
+	case *active.Aircraft, *reserved.Aircraft, *dereg.Aircraft:
 		return l.augmenter.AugmentAircraft(ctx, v)
 	default:
 		return nil
@@ -248,16 +248,16 @@ func (l LookupService) AugmentToBytes(a interface{}) []byte {
 func queryToQuerySet(query *Query, filter *Filter) QuerySet {
 
 	querySet := QuerySet{
-		master:   &master.Query{},
+		active:   &active.Query{},
 		reserved: &reserved.Query{},
 		dereg:    &dereg.Query{},
 	}
 
 	if filter != nil {
-		querySet.master.RegistrantState = filter.RegistrantState
-		querySet.master.AircraftModelCode = filter.AircraftModelCode
-		querySet.master.AirworthinessClassificationCode = filter.AirworthinessClassificationCode
-		querySet.master.ApprovedOperationCode = filter.ApprovedOperationCode
+		querySet.active.RegistrantState = filter.RegistrantState
+		querySet.active.AircraftModelCode = filter.AircraftModelCode
+		querySet.active.AirworthinessClassificationCode = filter.AirworthinessClassificationCode
+		querySet.active.ApprovedOperationCode = filter.ApprovedOperationCode
 
 		querySet.reserved.RegistrantState = filter.RegistrantState
 		querySet.reserved.AircraftModelCode = filter.AircraftModelCode
@@ -274,11 +274,11 @@ func queryToQuerySet(query *Query, filter *Filter) QuerySet {
 		return querySet
 	}
 
-	querySet.master.NNumber = query.NNumber
-	querySet.master.SerialNumber = query.SerialNumber
-	querySet.master.ModeSCodeHex = query.ModeSCodeHex
-	querySet.master.RegistrantName = query.RegistrantName
-	querySet.master.RegistrantStreet1 = query.RegistrantStreet1
+	querySet.active.NNumber = query.NNumber
+	querySet.active.SerialNumber = query.SerialNumber
+	querySet.active.ModeSCodeHex = query.ModeSCodeHex
+	querySet.active.RegistrantName = query.RegistrantName
+	querySet.active.RegistrantStreet1 = query.RegistrantStreet1
 
 	querySet.reserved.NNumber = query.NNumber
 	querySet.reserved.SerialNumber = query.SerialNumber
@@ -300,7 +300,7 @@ func queryToQuerySet(query *Query, filter *Filter) QuerySet {
 
 func ToBytes(a interface{}) []byte {
 	switch v := a.(type) {
-	case *master.A:
+	case *active.A:
 		b, err := protojson.Marshal(v)
 		if err != nil {
 			return nil
@@ -318,7 +318,7 @@ func ToBytes(a interface{}) []byte {
 			return nil
 		}
 		return b
-	case *master.Aircraft, *reserved.Aircraft, *dereg.Aircraft, *AugmentedAircraft, AugmentedAircraft:
+	case *active.Aircraft, *reserved.Aircraft, *dereg.Aircraft, *AugmentedAircraft, AugmentedAircraft:
 		b, err := json.Marshal(v)
 		if err != nil {
 			return nil

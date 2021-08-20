@@ -105,7 +105,7 @@ func addRoutes(e *echo.Echo, l *LookupService) {
 		if nNumber == "" {
 			return c.JSON(http.StatusBadRequest, "nnumber required")
 		}
-		r, err := l.GetMasterByNNumber(nNumber)
+		r, err := l.GetActiveByNNumber(nNumber)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

@@ -1,4 +1,4 @@
-package masterserver
+package activeserver
 
 import (
 	"encoding/json"
@@ -8,17 +8,17 @@ import (
 	"github.com/engelsjk/faadb/internal/utils"
 )
 
-type MasterService struct {
+type ActiveService struct {
 	Name  string
 	svc   *service.Service
 	codes Codes
 }
 
-func NewMasterService(dataPath, dbPath string, reload bool) (*MasterService, error) {
-	name := "master"
+func NewActiveService(dataPath, dbPath string, reload bool) (*ActiveService, error) {
+	name := "active"
 	numFields := 35
 
-	m := &MasterService{Name: name}
+	m := &ActiveService{Name: name}
 
 	m.codes = initCodes()
 
@@ -53,7 +53,7 @@ func NewMasterService(dataPath, dbPath string, reload bool) (*MasterService, err
 	return m, nil
 }
 
-func (m *MasterService) DecodeLine(line []string) (string, string, error) {
+func (m *ActiveService) DecodeLine(line []string) (string, string, error) {
 	record := Record{
 		NNumber:      utils.ToUpper(line[0]),
 		SerialNumber: utils.ToUpper(line[1]),
