@@ -48,8 +48,14 @@ func (ds3 *DS3) connectToAWS() error {
 	config := aws.Config{Region: aws.String(ds3.region)}
 	sess := session.Must(session.NewSession(&config))
 	if sess == nil {
-		return fmt.Errorf("problems with connection to AWS")
+		return fmt.Errorf("problems with connection to aws")
 	}
+
+	_, err := sess.Config.Credentials.Get()
+	if err != nil {
+		return fmt.Errorf("no aws credentials found")
+	}
+
 	ds3.svc = s3.New(sess)
 	return nil
 }
