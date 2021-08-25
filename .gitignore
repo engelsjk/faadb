@@ -1,5 +1,6 @@
 notes.txt
-data
+data/
+db/
 *.sh
 # *.pb.go
 # *.twirp.go
