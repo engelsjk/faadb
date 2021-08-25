@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
@@ -23,6 +24,7 @@ func NewServer(lookup *LookupService) *Server {
 func (s Server) Start(port string) {
 
 	e := echo.New()
+	e.Use(middleware.Logger())
 
 	addRoutes(e, s.lookup)
 

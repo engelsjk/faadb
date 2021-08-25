@@ -9,17 +9,19 @@ import (
 )
 
 type DB struct {
-	Path   string
-	Exists bool
-	db     *buntdb.DB
+	Path string
+	db   *buntdb.DB
 }
 
 func InitDB(path string) (*DB, error) {
+	if path == "" {
+		path = ":memory:"
+	}
 	db, err := buntdb.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	return &DB{db: db, Path: path, Exists: Exists(path)}, nil
+	return &DB{db: db, Path: path}, nil
 }
 
 func Exists(path string) bool {

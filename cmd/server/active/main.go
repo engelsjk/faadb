@@ -12,8 +12,8 @@ import (
 func main() {
 
 	var flagPort = flag.String("p", "8081", "port")
-	var flagDataPath = flag.String("dp", "MASTER.txt", "data path")
-	var flagDBPath = flag.String("db", "active.db", "database path")
+	var flagDataPath = flag.String("dp", "", "data path")
+	var flagDBPath = flag.String("db", "", "database path")
 	var flagReloadDB = flag.Bool("reload", false, "reload database")
 	flag.Parse()
 

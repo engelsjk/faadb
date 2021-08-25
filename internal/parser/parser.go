@@ -2,19 +2,24 @@ package parser
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/engelsjk/faadb/internal/db"
+	"github.com/engelsjk/faadb/internal/ds3"
 )
 
 type Parser struct {
 	Name              string
+	Source            string
 	path              string
 	expectedNumFields int
 	delim             string
 	decoder           func([]string) (string, string, error)
+	r                 io.ReadCloser
 }
 
 func NewParser(path string, n int, decoder func([]string) (string, string, error)) Parser {
@@ -27,19 +32,56 @@ func NewParser(path string, n int, decoder func([]string) (string, string, error
 	}
 }
 
+func (p *Parser) SetReaderFromPath() error {
+
+	// no path provided
+	if p.path == "" {
+		p.Source = "none"
+		return fmt.Errorf("no data path provided")
+	}
+
+	// s3
+	_, _, err := ds3.ParsePath(p.path)
+	if err == nil {
+		d, err := ds3.Init(p.path)
+		if err != nil {
+			return err
+		}
+		if ok := d.BucketKeyExists(); !ok {
+			return fmt.Errorf("bucket/key does not exist")
+		}
+		r, err := d.Reader()
+		if err != nil {
+			return err
+		}
+		p.r = r
+		p.Source = "s3"
+		return nil
+	}
+
+	// on disk
+
+	if _, err := os.Stat(p.path); os.IsNotExist(err) {
+		return fmt.Errorf("data path does not exist")
+	}
+
+	file, err := os.Open(p.path)
+	if err != nil {
+		return err
+	}
+
+	p.r = file
+	p.Source = "disk"
+	return nil
+}
+
 func (p *Parser) SetExpectedNumFields(n int) {
 	p.expectedNumFields = n
 }
 
 func (p *Parser) LoadLinesToDB(db *db.DB) (int, error) {
 
-	file, err := os.Open(p.path)
-	if err != nil {
-		return 0, err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(p.r)
 
 	n := 0
 	var line string
@@ -75,10 +117,20 @@ func (p *Parser) LoadLinesToDB(db *db.DB) (int, error) {
 
 		n++
 	}
+
 	if err := scanner.Err(); err != nil {
+		p.r.Close()
 		return n, nil
 	}
+
+	p.r.Close()
 	return n, nil
+}
+
+func (p *Parser) Close() {
+	if p.r != nil {
+		p.r.Close()
+	}
 }
 
 func (p *Parser) ExpectedNumFields() int {

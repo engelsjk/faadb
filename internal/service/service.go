@@ -24,19 +24,41 @@ type Service struct {
 
 func NewService(settings Settings, decoder func([]string) (string, string, error)) (*Service, error) {
 
+	var err error
+
+	// service
+
 	s := &Service{
 		Name: settings.Name,
 	}
 
 	log.Printf("%s : new service\n", s.Name)
+
+	// parser
+
+	p := parser.NewParser(settings.DataPath, settings.NumFields, decoder)
+	defer p.Close()
+
+	err = p.SetReaderFromPath()
+	if err != nil {
+		return nil, fmt.Errorf("%s : %w", s.Name, err)
+	}
+	log.Printf("%s : data source %s\n", s.Name, p.Source)
+
+	// database
+
 	log.Printf("%s : initializing db\n", s.Name)
 
 	dbExists := db.Exists(settings.DBPath)
+	memOnly := settings.DBPath == ""
 
-	var err error
+	if memOnly {
+		log.Printf("%s : mem only db\n", s.Name)
+	}
+
 	s.db, err = db.InitDB(settings.DBPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s : %w", s.Name, err)
 	}
 
 	if dbExists && !settings.Reload {
@@ -44,14 +66,15 @@ func NewService(settings Settings, decoder func([]string) (string, string, error
 		return s, nil
 	}
 
-	log.Printf("%s : parsing data file\n", s.Name)
+	if dbExists && settings.Reload {
+		log.Printf("%s : db already exists, reloading\n", s.Name)
+	}
 
-	p := parser.NewParser(settings.DataPath, settings.NumFields, decoder)
+	// load
 
 	log.Printf("%s : loading data to db\n", s.Name)
-
 	if err := s.loadToDB(p); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s : %w", s.Name, err)
 	}
 
 	return s, nil
@@ -86,7 +109,6 @@ type Record interface {
 }
 
 func (s *Service) UnmarshalRecords(bs [][]byte, rs interface{}) error {
-	var err error
 	records, ok := rs.([]*Record)
 	if !ok {
 		return fmt.Errorf("not records")
@@ -94,6 +116,7 @@ func (s *Service) UnmarshalRecords(bs [][]byte, rs interface{}) error {
 	if len(bs) != len(records) {
 		return fmt.Errorf("length mismatch")
 	}
+	var err error
 	for i, b := range bs {
 		r := records[i]
 		err = (*r).UnmarshalJSON(b)
